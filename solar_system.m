@@ -33,7 +33,7 @@ AU=149597870.691E3; % meters
 
 % Set up initial data
 
-NUM_BODIES = ; %number of astronomical bodies to compute for.
+NUM_BODIES = 3; %number of astronomical bodies to compute for.
 
 
 % Body 1: Sun (SOL)
