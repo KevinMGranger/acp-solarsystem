@@ -127,3 +127,45 @@ system = zero(NUM_BODIES, 11);
     system(1,11) = 1.9891E30 % kg 
 % Body 2: Earth
 % Body 3: Jupiter
+
+
+Main method of the program PSEUDOCODE:
+
+START
+tic
+calc init energy
+toc, step1time
+
+tic
+for time=0:timestep:ending_time
+	for each planet: (i)
+		for each planet: (j)
+			if i = j
+				SKIP
+			else if i < j
+				calculate forces
+			else if i > j
+				force = - negative of alread-calculated force!
+			end
+		end
+		acceleration(s)
+		velocitie(s)
+		position(s)
+		print new values
+		graph array storage
+	end
+%for documentation later: moving a planet when others are depending upon it
+%for calculation? GASP! No, actually! Since it checks if the force has
+%already been calculated, the new values dont' come in to play until the
+%next time step!
+end
+toc, step2time
+
+tic
+calc final energy
+ouptut change in energy
+toc, stage3time
+
+END. DONSKIES.
+
+% vim:tw=76
