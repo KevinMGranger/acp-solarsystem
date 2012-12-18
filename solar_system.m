@@ -1,12 +1,21 @@
 function solar_system(ending_time, time_step)
 
 DESCRIPTION
-    Simulate the motion of 
+    Simulate the motion of 3 bodies in a 3D solar system.
     
 ARGUMENTS
     ending_time : the duration of the simulation, in DAYS
 
     timestep : the timestep used in the numerical integration, in SECONDS
+
+MATHEMATICS
+    The program uses ____ Euler's Method, first order. This means
+
+VARIABLE NAMING
+
+AUTHOR
+    Kevin Granger <kmg2728@rit.edu>
+    2012-12-21
 
     
 
