@@ -211,17 +211,19 @@ toc, step1time
 
 tic
 for time=0:timestep:ending_time
-	for each planet: (i)
-		for each planet: (j)
+	for i=1:NUM_BODIES
+		for j=1:NUM_BODIES
 			if i = j
-				SKIP
+				continue;
 			else if i < j
-				calculate forces
+				calculate forces (add and subtract to get
+				net)
 			else if i > j
-				force = - negative of alread-calculated force!
+				force(i,j) = - force(j,i);
 			end
 		end
 		acceleration(s)
+		system(i,[8:10]) = 
 		velocitie(s)
 		position(s)
 		print new values
