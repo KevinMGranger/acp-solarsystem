@@ -84,8 +84,8 @@ ASK:	over course of simulation? beginning and end, or for each timestep?
     
 % Helpful Constants
 
-AU=149597870.691E3; % meters
-GRAVITATION=6.674E-11; % N-m^2/kg^2
+AU=149597870.691E3; % meters per Astronomical Unit
+G=6.674E-11; % N-m^2/kg^2
 
 % Set up initial data
 
@@ -96,6 +96,7 @@ ending_time = ending_time * 24 * 60 * 60; % how long to simulate (SECONDS)
 time=0;
 
 system = zero(NUM_BODIES, 11);
+forces = zero(NUM_BODIES);
 
 % NOTE: CURRENT VALUES ARE IN ASTRONOMICAL UNITS AND AU/DAY. DECIDE UPON
 % CHANGING SCHEME.
@@ -107,33 +108,36 @@ system = zero(NUM_BODIES, 11);
 
     % X
     system(1,2) = -4.173780072034275E-03; 
-    % 4.012052324571806E-03
 
     % Y
     system(1,3) = 7.099593014214438E-04;
-    % 2.671699098901946E-04
 
     % Z
     system(1,4) = 1.604504857505994E-05;
-    % -1.548133498090957E-04
 
     % VX
     system(1,5) = 1.604504857505994E-05;
-    % 4.836696226290300E-06
 
     % VY
     system(1,6) = -6.168298835870542E-06;
-    % 3.605199673273765E-06
 
     % VZ
     system(1,7) = -8.099453361184341E-09;
-    % -1.025046008492170E-07
 
     %MASS
-    system(1,11) = 1.9891E30 % kg 
+    system(1,11) = 1.9891E30; % kg 
 % Body 2: Earth
 % Body 3: Jupiter
 
+% Convert values
+
+% positions in AU -> Meters
+% AU * m/AU = m
+system(:,[2:4]) = system(:,[2:4]) .* AU; 
+
+% positions in AU/days -> meters/second
+% AU/day * ( (m/AU) / (seconds/day) ) = m/s
+system(:,[5:7]) = system(:,[5:7]) .* (AU / (24 * 60 * 60)); 
 
 Main method of the program PSEUDOCODE:
 
