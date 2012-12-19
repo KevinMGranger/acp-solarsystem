@@ -30,6 +30,13 @@ VARIABLE NAMING
     1   2  3  4  5   6   7   8   9   10  11
     ID  x  y  z  vx  vy  vz  ax  ay  az  mass 
 
+    Where:
+
+    ID is the numerical id of the body in the solar system (0 = sun, 1 =
+    mercury, 3 = earth...)
+    X,Y,Z are the X,Y,Z coordinates of the body relative to the Solar System
+    Barycenter.
+
     Forces are kept in a separate array to make visualizing the
     calculations easier. Visualize it as such:
 
@@ -53,7 +60,6 @@ If you're getting errors, make sure you're not mixing up ON and BY in the
 force array. That can be the confusing part.
 
 TODO:
-	DECIDE: do I want to convert seconds to au/day, or vice-versa?
 	look up how to do operations on ranges (do all accelerations in 1
 	step)
 	or perhaps make it an array of arrays?
