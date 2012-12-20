@@ -1,4 +1,4 @@
-function solar_solarsys(ending_time, time_step)
+function solar_system(ending_time, time_step)
 %
 %DESCRIPTION
 %    Simulate the motion of 3 bodies in a 3D solar system.
@@ -259,7 +259,11 @@ for time=0:time_step:ending_time
                 
             elseif i < j
                 % this relation has not been calculated before. Do it.
+		% r = sqrt of the sum of the squares of the differences of
+		% the positions of both planets
                 radius = sqrt( sum( diff( solarsys([i j], (2:4)) ) .^2 ) );
+		% using r^3 so that it can be broken into components merely
+		% by multiplying by the coordinate
                 forces(i,j) = (G * solarsys(i,11) * solarsys(j,11)) / radius^3;
                 
             elseif i > j
