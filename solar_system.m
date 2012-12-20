@@ -120,11 +120,15 @@ NUM_BODIES = 3; %number of astronomical bodies to compute for.
 ending_time = ending_time * 24 * 60 * 60; % how long to simulate (SECONDS)
 time=0;
 
-solarsys = zeros(NUM_BODIES, 14);
+
 forces = zeros(NUM_BODIES);
-for i=1:NUM_BODIES
-    graph(:,:,i) = zeros(3);
-end
+solarsys = zeros(NUM_BODIES,14);
+% xgraph = [];
+% ygraph = [];
+% zgraph = [];
+% for i=1:NUM_BODIES
+%     graph(:,:,i) = zeros(3);
+% end
 
 
     
@@ -147,7 +151,7 @@ end
     solarsys(1,4) = 1.604504857505994E-05;
 
     % VX
-    solarsys(1,5) = 1.604504857505994E-05;
+    solarsys(1,5) = 8.230492550577723E-07;
 
     % VY
     solarsys(1,6) = -6.168298835870542E-06;
@@ -214,6 +218,7 @@ end
 
 % } end Body 3: Jupiter
 
+
 % Convert Units {
 
 % positions in AU -> Meters
@@ -230,19 +235,26 @@ solarsys(:,[5:7]) = solarsys(:,[5:7]) .* (AU / (24 * 60 * 60));
 
 % } end Initial Data Setup
 
+hold on;
 
 % Print initial values
 for i=1:NUM_BODIES
     fprintf(1, 'ID   %d   t  %+5.4E  ', solarsys(i,1), time);
     fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
     fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
+
+%     xgraph(i,end+1) = solarsys(i,2);
+%     ygraph(i,end+1) = solarsys(i,3);
+%     zgraph(i,end+1) = solarsys(i,4);
 end
+
+plot(solarsys(1,2),solarsys(2,3),'y*',solarsys(2,
 
 tic;
 %calc init energy
 
 % for each time step...
-for time=0:time_step:ending_time
+for time=time_step:time_step:ending_time
     
     % figure out, for each planet i, the force on/by each other planet j.
     for i=1:NUM_BODIES
@@ -259,12 +271,12 @@ for time=0:time_step:ending_time
                 
             elseif i < j
                 % this relation has not been calculated before. Do it.
-		% r = sqrt of the sum of the squares of the differences of
-		% the positions of both planets
+                % r = sqrt of the sum of the squares of the differences of
+                % the positions of both planets
                 radius = sqrt( sum( diff( solarsys([i j], (2:4)) ) .^2 ) );
-		% using r^3 so that it can be broken into components merely
-		% by multiplying by the coordinate
-                forces(i,j) = (G * solarsys(i,11) * solarsys(j,11)) / radius^3;
+                % using r^3 so that it can be broken into components merely
+                % by multiplying by the coordinate
+                forces(i,j) = -(G * solarsys(i,11) * solarsys(j,11)) / radius^3;
                 
             elseif i > j
                 % this relation *has* been calculated already. Don't
@@ -276,7 +288,7 @@ for time=0:time_step:ending_time
             % net force has been calculated. break into components
             % force components  = forces so far + net force vector * x/y/z
             solarsys(i,(12:14)) = solarsys(i,(12:14)) + forces(i,j) .* ...
-                diff(solarsys([i j],(2:4)));
+                diff(solarsys([j i],(2:4)));
        
         end
         
@@ -295,12 +307,15 @@ for time=0:time_step:ending_time
         fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
         fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
         
-        graph(:,end+1,i) = solarsys(i,(2:4));
+%         graph(:,end+1,i) = solarsys(i,(2:4));
+%         xgraph(i,end+1) = solarsys(i,2);
+%         ygraph(i,end+1) = solarsys(i,3);
+%         zgraph(i,end+1) = solarsys(i,4);
         
     end
 end
 
-
+hold off;
 
 %calc final energy
 %ouptut change in energy
@@ -308,7 +323,10 @@ end
 fprintf('Total time: ');
 toc;
 
-plot(graph(1,:,1),graph(2,:,1),'y*',graph(1,:,2),graph(2,:,2),'b.');
+% plot(xgraph(1,:),ygraph(1,:),'y*',xgraph(2,:),ygraph(2,:),'b.');
+
+%plot(graph(1,:,1),graph(2,:,1),'y*',graph(1,:,2),graph(2,:,2),'b.');
+%plot3(graph(1,:,1),graph(2,:,1),[0:time_step:ending_time],'y*',graph(1,:,2),graph(2,:,2),[0:time_step:ending_time],'b.');
 
 
 % vim:tw=76 fdm=marker fmr={,}
