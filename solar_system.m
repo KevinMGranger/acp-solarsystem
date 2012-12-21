@@ -248,7 +248,7 @@ for i=1:NUM_BODIES
 %     zgraph(i,end+1) = solarsys(i,4);
 end
 
-plot(solarsys(1,2),solarsys(2,3),'y*',solarsys(2,
+plot(solarsys(1,2),solarsys(1,3),'y*',solarsys(2,2),solarsys(2,3),'b.');
 
 tic;
 %calc init energy
@@ -313,6 +313,9 @@ for time=time_step:time_step:ending_time
 %         zgraph(i,end+1) = solarsys(i,4);
         
     end
+    
+    plot(solarsys(1,3),solarsys(1,3),'y*',solarsys(2,2),solarsys(2,3),'b.');
+
 end
 
 hold off;
