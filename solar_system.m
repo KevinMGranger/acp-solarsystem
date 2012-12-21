@@ -1,4 +1,4 @@
-function solar_system(ending_time, time_step)
+function [frac_nrg] = solar_system(ending_time, time_step)
 %
 %DESCRIPTION
 %    Simulate the motion of 3 bodies in a 3D solar system.
@@ -69,7 +69,8 @@ DESIGN GOALS
     Note: the stray curly brackets you may find commented out, which aren't
     block quotes, are used for vim folding. This makes the file formatted
     nicely in vim, and can help break up the different parts of the file.
-%} }
+%}
+% }
 
     
 %{
@@ -115,6 +116,8 @@ earthz = [];
 jupx = [];
 jupy = [];
 jupz = [];
+init_energy = 0;
+final_energy = 0;
 
     
 % Planetary Starting Values {
@@ -222,12 +225,12 @@ solarsys(:,[5:7]) = solarsys(:,[5:7]) .* (AU / (24 * 60 * 60));
 
 
 % Print initial values
-for i=1:NUM_BODIES
-    fprintf(1, 'ID   %d   t  %+5.4E  ', solarsys(i,1), time);
-    fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
-    fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
-
-end
+% for i=1:NUM_BODIES
+%     fprintf(1, 'ID   %d   t  %+5.4E  ', solarsys(i,1), time);
+%     fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
+%     fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
+% 
+% end
 
 sunx(end+1) = solarsys(1,2);
 suny(end+1) = solarsys(1,3);
@@ -239,12 +242,33 @@ jupx(end+1) = solarsys(3,2);
 jupy(end+1) = solarsys(3,3);
 jupz(end+1) = solarsys(3,4);
 
-
-
-
-
 tic;
-%calc init energy
+
+potentials = zeros(NUM_BODIES);
+for i=1:NUM_BODIES
+    ke = 0.5 * solarsys(i,11) * sum((solarsys(i,(5:7)) .^2));
+    
+    for j=1:NUM_BODIES
+        if i == j
+            % same planet! skip.
+            continue;
+            
+        elseif i < j
+            % this relation has not been calculated before. Do it.
+            radius = sqrt( sum( diff( solarsys([i j], (2:4)) ) .^2 ) );
+            % using r^3 so that it can be broken into components merely
+            % by multiplying by the coordinate
+            potentials(i,j) = -(G * solarsys(i,11) * solarsys(j,11)) / radius;
+            
+        elseif i > j
+            % this relation *has* been calculated already.
+            potentials(i,j) = potentials(j,i);
+        end
+    end
+    init_energy = init_energy + ke + sum(potentials(i,:));
+end
+        
+    
 
 % for each time step...
 for time=time_step:time_step:ending_time
@@ -296,9 +320,9 @@ for time=time_step:time_step:ending_time
         solarsys(i,(5:7)) = solarsys(i,(5:7)) + solarsys(i,(8:10)) .* time_step;
         % positions       = old positions     + new velocities * timestep
         solarsys(i,(2:4)) = solarsys(i,(2:4)) + solarsys(i,(5:7)) .* time_step;
-        fprintf(1, 'ID   %d   t  %+5.4E  ', solarsys(i,1), time);
-        fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
-        fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
+%         fprintf(1, 'ID   %d   t  %+5.4E  ', solarsys(i,1), time);
+%         fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
+%         fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
        
     end
     
@@ -315,12 +339,34 @@ for time=time_step:time_step:ending_time
 
 end
 
-% hold off;
+potentials = zeros(NUM_BODIES);
+for i=1:NUM_BODIES
+    ke = 0.5 * solarsys(i,11) * sum((solarsys(i,(5:7)) .^2));
+    
+    for j=1:NUM_BODIES
+        if i == j
+            % same planet! skip.
+            continue;
+            
+        elseif i < j
+            % this relation has not been calculated before. Do it.
+            radius = sqrt( sum( diff( solarsys([i j], (2:4)) ) .^2 ) );
+            % using r^3 so that it can be broken into components merely
+            % by multiplying by the coordinate
+            potentials(i,j) = -(G * solarsys(i,11) * solarsys(j,11)) / radius;
+            
+        elseif i > j
+            % this relation *has* been calculated already.
+            potentials(i,j) = potentials(j,i);
+        end
+    end
+    final_energy = final_energy + ke + sum(potentials(i,:));
+end
 
-%calc final energy
-%ouptut change in energy
+frac_nrg = abs((final_energy - init_energy) / init_energy);
 
 plot(sunx,suny,'y*',earthx,earthy,'b.',jupx,jupy,'ro');
+%plot3(sunx,suny,sunz,'y*',earthx,earthy,earthz,'b.',jupx,jupy,jupz,'ro');
 
 fprintf('Total time: ');
 toc;
