@@ -59,15 +59,8 @@ VARIABLE NAMING
     loop.
 
 
-    Graph data is kept in a separate three-dimensional matrix. The first
-    argument represents the X/Y/Z dimension, the second represents each
-    iteration of the simulation, and the third represents the planet.
-
-    For example,
-
-    graph(2,3,1)
-
-    is the Y position after 2 timesteps of the first body.
+    Arrays for graphing are descriptively named. For example, earthy is the
+    array of the earth's Y positions over the course of the simulation.
 
 DESIGN GOALS
     Make the program scale flawlessly, clearly and concisely, no matter the
@@ -79,17 +72,8 @@ DESIGN GOALS
 %} }
 
     
-%{ A NOTE TO THE DEVELOPER:
-If you're getting errors, make sure you're not mixing up ON and BY in the
-force array. That can be the confusing part.
-
-NOTES: run program for 1 year, earth should be at starting point! or use
-the website to find out where it should be exactly
-
+%{
 TODO:
-	look up how to do operations on ranges (do all accelerations in 1
-	step)
-	or perhaps make it an array of arrays?
 	make sure graphing is working properly! no squishies!
 ASK: 	what do you mean by "view from above the earth's plane?" graph of
 all planets relative to earth, from above?
@@ -97,7 +81,6 @@ all planets relative to earth, from above?
 		5. how close am I to JPL values?
 		4. jupiter modification
 		2. do analysis on change in momentums
-ASK:	over course of simulation? beginning and end, or for each timestep?
 		1. extend for all planets (including dwarf ones)
 		3. convert for more accurate method, increase sim time
 
@@ -120,16 +103,18 @@ NUM_BODIES = 3; %number of astronomical bodies to compute for.
 ending_time = ending_time * 24 * 60 * 60; % how long to simulate (SECONDS)
 time=0;
 
-
+% declare some variables and pre-allocate some for size
 forces = zeros(NUM_BODIES);
 solarsys = zeros(NUM_BODIES,14);
-% xgraph = [];
-% ygraph = [];
-% zgraph = [];
-% for i=1:NUM_BODIES
-%     graph(:,:,i) = zeros(3);
-% end
-
+sunx = [];
+suny = [];
+sunz = [];
+earthx = [];
+earthy = [];
+earthz = [];
+jupx = [];
+jupy = [];
+jupz = [];
 
     
 % Planetary Starting Values {
@@ -235,7 +220,6 @@ solarsys(:,[5:7]) = solarsys(:,[5:7]) .* (AU / (24 * 60 * 60));
 
 % } end Initial Data Setup
 
-hold on;
 
 % Print initial values
 for i=1:NUM_BODIES
@@ -243,12 +227,21 @@ for i=1:NUM_BODIES
     fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
     fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
 
-%     xgraph(i,end+1) = solarsys(i,2);
-%     ygraph(i,end+1) = solarsys(i,3);
-%     zgraph(i,end+1) = solarsys(i,4);
 end
 
-plot(solarsys(1,2),solarsys(1,3),'y*',solarsys(2,2),solarsys(2,3),'b.');
+sunx(end+1) = solarsys(1,2);
+suny(end+1) = solarsys(1,3);
+sunz(end+1) = solarsys(1,4);
+earthx(end+1) = solarsys(2,2);
+earthy(end+1) = solarsys(2,3);
+earthz(end+1) = solarsys(2,4);
+jupx(end+1) = solarsys(3,2);
+jupy(end+1) = solarsys(3,3);
+jupz(end+1) = solarsys(3,4);
+
+
+
+
 
 tic;
 %calc init energy
@@ -297,8 +290,8 @@ for time=time_step:time_step:ending_time
     % now that all of the forces for this timestep are calculated, actually
     % change position, velocity, etc.
     for i=1:NUM_BODIES
-        % accelerations    = old accelerations  + forces          / mass
-        solarsys(i,(8:10)) = solarsys(i,(8:10)) + solarsys(i,(12:14)) ./ solarsys(i,11);
+        % accelerations    =   forces          / mass
+        solarsys(i,(8:10)) = solarsys(i,(12:14)) ./ solarsys(i,11);
         % velocities      = old velocities    + accelerations * timestep
         solarsys(i,(5:7)) = solarsys(i,(5:7)) + solarsys(i,(8:10)) .* time_step;
         % positions       = old positions     + new velocities * timestep
@@ -306,30 +299,31 @@ for time=time_step:time_step:ending_time
         fprintf(1, 'ID   %d   t  %+5.4E  ', solarsys(i,1), time);
         fprintf(1, 'x  %+5.4E  y  %+5.4E  z  %+5.4E  ', solarsys(i,2), solarsys(i,3), solarsys(i,4));
         fprintf(1, 'vx  %+5.4E  vy  %+5.4E  vz  %+5.4E \n', solarsys(i,5), solarsys(i,6), solarsys(i,7));
-        
-%         graph(:,end+1,i) = solarsys(i,(2:4));
-%         xgraph(i,end+1) = solarsys(i,2);
-%         ygraph(i,end+1) = solarsys(i,3);
-%         zgraph(i,end+1) = solarsys(i,4);
-        
+       
     end
     
-    plot(solarsys(1,3),solarsys(1,3),'y*',solarsys(2,2),solarsys(2,3),'b.');
+    sunx(end+1) = solarsys(1,2);
+    suny(end+1) = solarsys(1,3);
+    sunz(end+1) = solarsys(1,4);
+    earthx(end+1) = solarsys(2,2);
+    earthy(end+1) = solarsys(2,3);
+    earthz(end+1) = solarsys(2,4);
+    jupx(end+1) = solarsys(3,2);
+    jupy(end+1) = solarsys(3,3);
+    jupz(end+1) = solarsys(3,4);
+
 
 end
 
-hold off;
+% hold off;
 
 %calc final energy
 %ouptut change in energy
 
+plot(sunx,suny,'y*',earthx,earthy,'b.',jupx,jupy,'ro');
+
 fprintf('Total time: ');
 toc;
-
-% plot(xgraph(1,:),ygraph(1,:),'y*',xgraph(2,:),ygraph(2,:),'b.');
-
-%plot(graph(1,:,1),graph(2,:,1),'y*',graph(1,:,2),graph(2,:,2),'b.');
-%plot3(graph(1,:,1),graph(2,:,1),[0:time_step:ending_time],'y*',graph(1,:,2),graph(2,:,2),[0:time_step:ending_time],'b.');
 
 
 % vim:tw=76 fdm=marker fmr={,}
