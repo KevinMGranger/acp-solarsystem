@@ -19,6 +19,7 @@ function solar_system(ending_time, time_step)
 %    Kevin Granger <kmg2728@rit.edu>
 %    2012-12-21
 
+
 % Additional Documentation (not maintained in an info page) {
 %{
 Documentation not necessary for 'help'
@@ -69,22 +70,8 @@ DESIGN GOALS
     Note: the stray curly brackets you may find commented out, which aren't
     block quotes, are used for vim folding. This makes the file formatted
     nicely in vim, and can help break up the different parts of the file.
-%} }
-
-    
-%{
-TODO:
-	make sure graphing is working properly! no squishies!
-ASK: 	what do you mean by "view from above the earth's plane?" graph of
-all planets relative to earth, from above?
-	bells and whistles:
-		5. how close am I to JPL values?
-		4. jupiter modification
-		2. do analysis on change in momentums
-		1. extend for all planets (including dwarf ones)
-		3. convert for more accurate method, increase sim time
-
 %}
+% }
     
 
 % Helpful Constants {
@@ -229,6 +216,7 @@ for i=1:NUM_BODIES
 
 end
 
+%update graph arrays
 sunx(end+1) = solarsys(1,2);
 suny(end+1) = solarsys(1,3);
 sunz(end+1) = solarsys(1,4);
@@ -238,13 +226,6 @@ earthz(end+1) = solarsys(2,4);
 jupx(end+1) = solarsys(3,2);
 jupy(end+1) = solarsys(3,3);
 jupz(end+1) = solarsys(3,4);
-
-
-
-
-
-tic;
-%calc init energy
 
 % for each time step...
 for time=time_step:time_step:ending_time
@@ -302,6 +283,7 @@ for time=time_step:time_step:ending_time
        
     end
     
+    %update graphing arrays
     sunx(end+1) = solarsys(1,2);
     suny(end+1) = solarsys(1,3);
     sunz(end+1) = solarsys(1,4);
@@ -314,16 +296,5 @@ for time=time_step:time_step:ending_time
 
 
 end
-
-% hold off;
-
-%calc final energy
-%ouptut change in energy
-
-plot(sunx,suny,'y*',earthx,earthy,'b.',jupx,jupy,'ro');
-
-fprintf('Total time: ');
-toc;
-
 
 % vim:tw=76 fdm=marker fmr={,}
