@@ -117,8 +117,6 @@ earthz = [];
 jupx = [];
 jupy = [];
 jupz = [];
-init_energy = 0;
-final_energy = 0;
 
     
 % Planetary Starting Values {
@@ -246,30 +244,18 @@ jupz(end+1) = solarsys(3,4);
 
 tic;
 
-potentials = zeros(NUM_BODIES);
+
+init_energy = 0;
 for i=1:NUM_BODIES
-    ke = 0.5 * solarsys(i,11) * sum((solarsys(i,(5:7)) .^2));
+    init_energy = init_energy + 0.5 * solarsys(i,11) * sum((solarsys(i,(5:7)) .^2));
     
     for j=1:NUM_BODIES
-        if i == j
-            % same planet! skip.
-            continue;
-            
-        elseif i < j
-            % this relation has not been calculated before. Do it.
+        if i < j
             radius = sqrt( sum( diff( solarsys([i j], (2:4)) ) .^2 ) );
-            % using r^3 so that it can be broken into components merely
-            % by multiplying by the coordinate
-            potentials(i,j) = -(G * solarsys(i,11) * solarsys(j,11)) / radius;
-            
-        elseif i > j
-            % this relation *has* been calculated already.
-            potentials(i,j) = potentials(j,i);
+            init_energy = init_energy + -(G * solarsys(i,11) * solarsys(j,11)) / radius;
         end
     end
-    init_energy = init_energy + ke + sum(potentials(i,:));
 end
-        
     
 
 % for each time step...
@@ -342,36 +328,24 @@ for time=time_step:time_step:ending_time
 
 end
 
-potentials = zeros(NUM_BODIES);
+final_energy = 0;
 for i=1:NUM_BODIES
-    ke = 0.5 * solarsys(i,11) * sum((solarsys(i,(5:7)) .^2));
+    final_energy = final_energy + 0.5 * solarsys(i,11) * sum((solarsys(i,(5:7)) .^2));
     
     for j=1:NUM_BODIES
-        if i == j
-            % same planet! skip.
-            continue;
-            
-        elseif i < j
-            % this relation has not been calculated before. Do it.
+        if i < j
             radius = sqrt( sum( diff( solarsys([i j], (2:4)) ) .^2 ) );
-            % using r^3 so that it can be broken into components merely
-            % by multiplying by the coordinate
-            potentials(i,j) = -(G * solarsys(i,11) * solarsys(j,11)) / radius;
-            
-        elseif i > j
-            % this relation *has* been calculated already.
-            potentials(i,j) = potentials(j,i);
+            final_energy = final_energy + -(G * solarsys(i,11) * solarsys(j,11)) / radius;
         end
     end
-    final_energy = final_energy + ke + sum(potentials(i,:));
 end
 
-frac_nrg = abs((final_energy - init_energy) / init_energy);
+frac_nrg = abs((final_energy - init_energy) / init_energy)
 
 fprintf('Sun max vel:\t%f', max(sunvel));
 
 
-fprintf('\nFinal values:\n\n');
+fprintf('\ninit values:\n\n');
 
 for i=1:NUM_BODIES
     fprintf('%u\n%+5.4E %+5.4E %+5.4E\n%+5.4E %+5.4E %+5.4E\n', solarsys(i,1), solarsys(i,2), solarsys(i,3), solarsys(i,4), solarsys(i,5), solarsys(i,6), solarsys(i,7));
