@@ -1,11 +1,11 @@
 function nrghalf
 
-timestep = 24*60*60*365;
+timestep = 24*60*60*215;
 timesteps(1) = timestep;
 
 errors(1) = solar_system(365*300,timestep)
 
-while (timestep > 24*60*30)
+while (timestep > 24*60)
 	timestep = timestep / 2
     timesteps(end+1) = timestep;
 	errors(end+1) = solar_system(365*300,timestep);

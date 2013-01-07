@@ -110,6 +110,7 @@ solarsys = zeros(NUM_BODIES,14);
 sunx = [];
 suny = [];
 sunz = [];
+sunvel = [];
 earthx = [];
 earthy = [];
 earthz = [];
@@ -235,6 +236,7 @@ solarsys(:,[5:7]) = solarsys(:,[5:7]) .* (AU / (24 * 60 * 60));
 sunx(end+1) = solarsys(1,2);
 suny(end+1) = solarsys(1,3);
 sunz(end+1) = solarsys(1,4);
+sunvel(end+1) = sqrt(sum(solarsys(1,5:7).^2));
 earthx(end+1) = solarsys(2,2);
 earthy(end+1) = solarsys(2,3);
 earthz(end+1) = solarsys(2,4);
@@ -329,6 +331,7 @@ for time=time_step:time_step:ending_time
     sunx(end+1) = solarsys(1,2);
     suny(end+1) = solarsys(1,3);
     sunz(end+1) = solarsys(1,4);
+    sunvel(end+1) = sqrt(sum(solarsys(1,5:7).^2));
     earthx(end+1) = solarsys(2,2);
     earthy(end+1) = solarsys(2,3);
     earthz(end+1) = solarsys(2,4);
@@ -365,7 +368,17 @@ end
 
 frac_nrg = abs((final_energy - init_energy) / init_energy);
 
-plot(sunx,suny,'y*',earthx,earthy,'b.',jupx,jupy,'ro');
+fprintf('Sun max vel:\t%f', max(sunvel));
+
+
+fprintf('\nFinal values:\n\n');
+
+for i=1:NUM_BODIES
+    fprintf('%u\n%+5.4E %+5.4E %+5.4E\n%+5.4E %+5.4E %+5.4E\n', solarsys(i,1), solarsys(i,2), solarsys(i,3), solarsys(i,4), solarsys(i,5), solarsys(i,6), solarsys(i,7));
+end
+
+plot(sunx,suny,'y*');
+%plot(sunx,suny,'y*',earthx,earthy,'b.',jupx,jupy,'ro');
 %plot3(sunx,suny,sunz,'y*',earthx,earthy,earthz,'b.',jupx,jupy,jupz,'ro');
 
 fprintf('Total time: ');
