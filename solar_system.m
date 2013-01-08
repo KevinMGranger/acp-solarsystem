@@ -351,9 +351,18 @@ for i=1:NUM_BODIES
     fprintf('%u\n%+5.4E %+5.4E %+5.4E\n%+5.4E %+5.4E %+5.4E\n', solarsys(i,1), solarsys(i,2), solarsys(i,3), solarsys(i,4), solarsys(i,5), solarsys(i,6), solarsys(i,7));
 end
 
-plot(sunx,suny,'y*');
-%plot(sunx,suny,'y*',earthx,earthy,'b.',jupx,jupy,'ro');
-%plot3(sunx,suny,sunz,'y*',earthx,earthy,earthz,'b.',jupx,jupy,jupz,'ro');
+pbaspect([1 1 1]);
+
+%Sun
+%plot(sunx,suny,'*');
+%plot(sunx,sunz,'*');
+%Sun + Earth
+%plot(sunx,suny,'*',earthx,earthy,'s')
+%plot(sunx,sunz,'*',earthx,earthz,'s')
+%Alla dem
+%plot(sunx,suny,'*',earthx,earthy,'s',jupx,jupy,'o');
+plot(sunx,sunz,'*',earthx,earthz,'s',jupx,jupz,'o');
+
 
 fprintf('Total time: ');
 toc;
