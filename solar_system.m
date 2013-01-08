@@ -235,6 +235,7 @@ sunx(end+1) = solarsys(1,2);
 suny(end+1) = solarsys(1,3);
 sunz(end+1) = solarsys(1,4);
 sunvel(end+1) = sqrt(sum(solarsys(1,5:7).^2));
+sunvel(end)
 earthx(end+1) = solarsys(2,2);
 earthy(end+1) = solarsys(2,3);
 earthz(end+1) = solarsys(2,4);
